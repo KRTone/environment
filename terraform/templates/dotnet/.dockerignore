@@ -1,0 +1,6 @@
+**/.git
+**/.gitea
+**/bin
+**/obj
+**/.vs
+**/*.user

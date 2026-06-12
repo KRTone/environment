@@ -10,7 +10,17 @@ network_name = "environment-network"
 # gitea_root_url = "http://localhost:3000"
 
 # act_runner
-act_runner_image        = "gitea/act_runner:latest"
+# act_runner_image      = "environment-act-runner:latest"
 # runner_name           = "gitea-docker-runner"
-# runner_labels         = "self-hosted,linux,docker"
+# runner_labels         = "self-hosted:docker://node:20-bookworm,linux:docker://node:20-bookworm,docker:docker://docker:24-cli"
 # runner_container_name = "gitea-act-runner"
+
+# .NET repo + deploy в Docker Desktop Kubernetes
+create_dotnet_repo         = true
+dotnet_repo_name           = "dotnet-app"
+dotnet_repo_owner          = "admin"
+dotnet_image_name          = "dotnet-app"
+k8s_namespace              = "environment"
+k8s_node_port              = 30080
+# kubeconfig_host_path     = "C:/Users/you/.kube/config"
+mount_kubeconfig_in_runner = true

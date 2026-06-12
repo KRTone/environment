@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${image_name}
+  namespace: ${k8s_namespace}
+  labels:
+    app: ${image_name}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${image_name}
+  template:
+    metadata:
+      labels:
+        app: ${image_name}
+    spec:
+      containers:
+        - name: ${image_name}
+          image: localhost:${k8s_registry_node_port}/${image_name}:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20

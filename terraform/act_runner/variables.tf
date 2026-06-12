@@ -1,7 +1,7 @@
 variable "act_runner_image" {
-  description = "Docker-образ Gitea Actions runner (тег latest — всегда актуальная версия из registry)"
+  description = "Имя локально собираемого образа act_runner (Dockerfile с nodejs)"
   type        = string
-  default     = "gitea/act_runner:latest"
+  default     = "environment-act-runner:latest"
 }
 
 variable "network_name" {
@@ -34,9 +34,9 @@ variable "runner_name" {
 }
 
 variable "runner_labels" {
-  description = "Метки runner"
+  description = "Метки runner с привязкой к Docker-образам (не :host — иначе нужен node на runner)"
   type        = string
-  default     = "self-hosted,linux,docker"
+  default     = "self-hosted:docker://node:20-bookworm,linux:docker://node:20-bookworm,docker:docker://docker:24-cli"
 }
 
 variable "docker_socket_path" {
@@ -49,4 +49,16 @@ variable "container_name" {
   description = "Имя контейнера runner"
   type        = string
   default     = "gitea-act-runner"
+}
+
+variable "kubeconfig_host_path" {
+  description = "Путь к kubeconfig на хосте для deploy в Kubernetes"
+  type        = string
+  default     = ""
+}
+
+variable "mount_kubeconfig" {
+  description = "Смонтировать kubeconfig в контейнер act_runner"
+  type        = bool
+  default     = false
 }

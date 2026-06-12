@@ -43,3 +43,18 @@ output "runner_registration_token" {
   value       = module.gitea.runner_registration_token
   sensitive   = true
 }
+
+output "dotnet_repo_url" {
+  description = "URL .NET репозитория в Gitea"
+  value       = var.create_dotnet_repo ? "${var.gitea_root_url}/${var.dotnet_repo_owner}/${var.dotnet_repo_name}" : null
+}
+
+output "dotnet_k8s_namespace" {
+  description = "Kubernetes namespace для .NET deploy"
+  value       = var.create_dotnet_repo ? var.k8s_namespace : null
+}
+
+output "dotnet_k8s_node_port" {
+  description = "NodePort сервиса .NET приложения"
+  value       = var.create_dotnet_repo ? var.k8s_node_port : null
+}

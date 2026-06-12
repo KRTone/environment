@@ -6,8 +6,9 @@ module "gitea" {
   gitea_image     = var.gitea_image
   gitea_port      = var.gitea_port
   gitea_ssh_port  = var.gitea_ssh_port
-  gitea_root_url  = var.gitea_root_url
-  admin_username  = var.admin_username
+  gitea_root_url    = var.gitea_root_url
+  gitea_actions_url = var.gitea_actions_url
+  admin_username    = var.admin_username
   admin_password  = var.admin_password
   admin_email     = var.admin_email
 }
@@ -24,6 +25,8 @@ module "act_runner" {
   runner_registration_token = module.gitea.runner_registration_token
   runner_name = var.runner_name
   runner_labels = var.runner_labels
-  docker_socket_path = var.docker_socket_path
-  container_name = var.runner_container_name
+  docker_socket_path       = var.docker_socket_path
+  container_name           = var.runner_container_name
+  kubeconfig_host_path     = local.kubeconfig_host_path
+  mount_kubeconfig         = var.mount_kubeconfig_in_runner && var.create_dotnet_repo
 }

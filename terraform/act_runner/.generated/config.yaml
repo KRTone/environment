@@ -1,0 +1,13 @@
+# Job-контейнеры подключаются к той же сети, что и Gitea — иначе localhost:3000 недоступен.
+log:
+  level: info
+
+runner:
+  file: .runner
+  capacity: 1
+
+container:
+  network: environment-network
+  valid_volumes:
+    - /var/run/docker.sock
+  options: --mount type=bind,source=C:/Users/KRT/.kube/config,target=/kube/config,readonly

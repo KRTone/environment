@@ -22,6 +22,12 @@ variable "gitea_root_url" {
   default     = "http://localhost:3000"
 }
 
+variable "gitea_actions_url" {
+  description = "URL для загрузки Gitea Actions (actions/checkout и др.). Пусто — http://gitea:<port> (доступно из Docker-сети runner)"
+  type        = string
+  default     = ""
+}
+
 variable "admin_username" {
   description = "Логин администратора Gitea"
   type        = string

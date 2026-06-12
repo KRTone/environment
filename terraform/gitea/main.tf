@@ -12,6 +12,9 @@ resource "docker_image" "gitea" {
 }
 
 locals {
+  # Job-контейнеры runner не видят localhost хоста — actions клонируются по внутреннему имени gitea в Docker-сети.
+  gitea_actions_url = var.gitea_actions_url != "" ? var.gitea_actions_url : "http://gitea:${var.gitea_port}"
+
   gitea_env = [
     "USER_UID=1000",
     "USER_GID=1000",
@@ -24,7 +27,7 @@ locals {
     "GITEA__server__SSH_PORT=${var.gitea_ssh_port}",
     "GITEA__server__HTTP_PORT=${var.gitea_port}",
     "GITEA__actions__ENABLED=true",
-    "GITEA__actions__DEFAULT_ACTIONS_URL=self",
+    "GITEA__actions__DEFAULT_ACTIONS_URL=${local.gitea_actions_url}",
     "GITEA_RUNNER_REGISTRATION_TOKEN=${random_password.runner_token.result}",
   ]
 }
