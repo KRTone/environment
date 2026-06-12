@@ -1,0 +1,16 @@
+# Общая сеть
+network_name = "environment-network"
+
+# Gitea
+# admin_username = "admin"
+# admin_password = "надёжный_пароль"
+# admin_email    = "you@example.com"
+# gitea_port     = 3000
+# gitea_ssh_port = 2222
+# gitea_root_url = "http://localhost:3000"
+
+# act_runner
+act_runner_image        = "gitea/act_runner:latest"
+# runner_name           = "gitea-docker-runner"
+# runner_labels         = "self-hosted,linux,docker"
+# runner_container_name = "gitea-act-runner"

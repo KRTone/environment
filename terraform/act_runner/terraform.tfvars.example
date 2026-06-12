@@ -1,0 +1,6 @@
+# Рекомендуется: корневой стек terraform/ (сеть + Gitea + runner одной командой).
+# Этот файл — только для раздельного запуска модуля act_runner.
+# Сеть environment-network должна уже существовать (создаётся в terraform/network.tf).
+
+network_name              = "environment-network"
+runner_registration_token = "вставьте_токен_из_gitea_terraform_output"
