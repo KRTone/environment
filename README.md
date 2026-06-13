@@ -1,7 +1,14 @@
-# Local dev stack
+# Описание
+Учебный проект для локального развёртывания в docker инфраструктуры для разработки включающая в себя:
+- terraform
+- git
+- ci/cd
+- image registry
+- кластер k8s
 
-Gitea, Gitea Actions runner, Docker registry и k3d Kubernetes в `gitea-network`.
+Проект написан с использование Cursor. Документация в папке Documentation.
 
-Шаблон .NET-приложения: `templates/dotnet/`.
-
-**Перед `terraform apply`:** Docker, Terraform, PowerShell и **[k3d](https://k3d.io/stable/#installation)** в PATH — см. `documentation/EnvironmentObsidian/Установка компонентов.md`.
+# Дальнейшие шаги
+1. Добавить GitOps, например ArgoCD (free)
+2. Заменить локальный K8s на внейшний кластер(облачный или on-pem)
+3. настроить registry и deployment под внешний кластер
