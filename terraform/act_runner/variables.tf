@@ -1,7 +1,7 @@
 variable "act_runner_image" {
   description = "Имя локально собираемого образа act_runner (Dockerfile с nodejs)"
   type        = string
-  default     = "environment-act-runner:latest"
+  default     = "gitea-act-runner:local"
 }
 
 variable "network_name" {

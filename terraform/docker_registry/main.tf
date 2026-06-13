@@ -8,11 +8,6 @@ resource "docker_container" "registry" {
 
   restart = "unless-stopped"
 
-  ports {
-    internal = 5000
-    external = var.registry_port
-  }
-
   networks_advanced {
     name = var.network_name
   }

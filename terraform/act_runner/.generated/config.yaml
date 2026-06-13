@@ -1,4 +1,4 @@
-# Job-контейнеры подключаются к той же сети, что и Gitea — иначе localhost:3000 недоступен.
+# Job-контейнеры подключаются к gitea-network — сервисы доступны по DNS-именам контейнеров.
 log:
   level: info
 
@@ -7,7 +7,7 @@ runner:
   capacity: 1
 
 container:
-  network: environment-network
+  network: gitea-network
   valid_volumes:
     - /var/run/docker.sock
-  options: --mount type=bind,source=C:/Users/KRT/.kube/config,target=/kube/config,readonly
+  options: --mount type=bind,source=C:/Users/KRT/Desktop/environment/terraform/.generated/kubeconfig-local-runner,target=/kube/config,readonly

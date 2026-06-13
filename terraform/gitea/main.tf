@@ -12,7 +12,7 @@ resource "docker_image" "gitea" {
 }
 
 locals {
-  # Job-контейнеры runner не видят localhost хоста — actions клонируются по внутреннему имени gitea в Docker-сети.
+  # Job-контейнеры runner работают в gitea-network — clone и Actions по http://gitea:<port>.
   gitea_actions_url = var.gitea_actions_url != "" ? var.gitea_actions_url : "http://gitea:${var.gitea_port}"
 
   gitea_env = [
@@ -21,9 +21,9 @@ locals {
     "GITEA__security__INSTALL_LOCK=true",
     "GITEA__database__DB_TYPE=sqlite3",
     "GITEA__database__PATH=/data/gitea/gitea.db",
-    "GITEA__server__DOMAIN=localhost",
+    "GITEA__server__DOMAIN=gitea",
     "GITEA__server__ROOT_URL=${var.gitea_root_url}",
-    "GITEA__server__SSH_DOMAIN=localhost",
+    "GITEA__server__SSH_DOMAIN=gitea",
     "GITEA__server__SSH_PORT=${var.gitea_ssh_port}",
     "GITEA__server__HTTP_PORT=${var.gitea_port}",
     "GITEA__actions__ENABLED=true",
@@ -60,7 +60,7 @@ resource "docker_container" "gitea" {
   }
 
   healthcheck {
-    test         = ["CMD", "wget", "-q", "--spider", "http://localhost:${var.gitea_port}/api/healthz"]
+    test         = ["CMD", "wget", "-q", "--spider", "http://gitea:${var.gitea_port}/api/healthz"]
     interval     = "10s"
     timeout      = "5s"
     retries      = 12

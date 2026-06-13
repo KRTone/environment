@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ${image_name}
-          image: localhost:${k8s_registry_node_port}/${image_name}:latest
+          image: ${registry_address}/${image_name}:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

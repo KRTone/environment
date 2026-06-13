@@ -4,19 +4,19 @@ variable "network_name" {
 }
 
 variable "container_name" {
-  description = "Имя контейнера Docker registry"
+  description = "Имя контейнера Docker registry (DNS-имя в сети)"
   type        = string
-  default     = "environment-registry"
-}
-
-variable "registry_port" {
-  description = "Порт registry на хосте (push/pull образов CI)"
-  type        = number
-  default     = 30500
+  default     = "docker-registry"
 }
 
 variable "registry_image" {
   description = "Docker-образ registry"
   type        = string
   default     = "registry:2"
+}
+
+variable "registry_port" {
+  description = "Внутренний порт registry в Docker-сети"
+  type        = number
+  default     = 5000
 }

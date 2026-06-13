@@ -9,7 +9,7 @@
 1. Создайте репозиторий в Gitea (например `admin/dotnet-app`).
 2. Скопируйте содержимое шаблона (кроме `.tpl`-файлов — их нужно отрендерить).
 3. Отрендерите `.gitea/workflows/ci.yml.tpl` → `.gitea/workflows/ci.yml` (подставьте переменные ниже).
-4. Отрендерите `k8s/*.yaml` — замените `${image_name}`, `${k8s_namespace}`, `${k8s_node_port}`, `${k8s_registry_node_port}`.
+4. Отрендерите `k8s/*.yaml` — замените `${image_name}`, `${k8s_namespace}`, `${k8s_node_port}`, `${registry_address}`.
 5. `git init`, commit, push в Gitea.
 
 ### Переменные для ci.yml.tpl
@@ -17,21 +17,21 @@
 | Переменная | Пример |
 |------------|--------|
 | `image_name` | `dotnet-app` |
-| `k8s_namespace` | `environment` |
+| `k8s_namespace` | `apps` |
 | `k8s_node_port` | `30080` |
-| `k8s_registry_node_port` | `30500` (=`terraform output registry_url`) |
-| `kubeconfig_host_path` | `C:/Users/you/.kube/config` |
+| `registry_address` | `docker-registry:5000` (из `terraform output -raw registry_address`) |
+| `docker_network_name` | `gitea-network` |
 | `runner_label` | `self-hosted` |
 | `gitea_host` | `gitea` |
 | `gitea_port` | `3000` |
 
-Перед deploy включите Kubernetes в Docker Desktop и выполните `terraform apply` (Gitea + runner + registry).
+Перед deploy установите [k3d](https://k3d.io/stable/#installation) и выполните `terraform apply` (Gitea + runner + registry + k3d в `gitea-network`).
 
 ## Pipeline
 
 1. **test** — `dotnet test`
 2. **build-image** — сборка Docker-образа на runner
-3. **deploy** — push в registry + `kubectl apply`
+3. **deploy** — push в `docker-registry:5000` + `kubectl apply` через `/kube/config`
 
 ## Локальный запуск
 
@@ -41,11 +41,11 @@ dotnet run --project src/DotNetApp
 
 ## Kubernetes
 
-После deploy:
+После deploy (из контейнера в `gitea-network` или через port-forward):
 
 ```powershell
-kubectl get pods -n environment
-kubectl port-forward svc/dotnet-app 8080:8080 -n environment
+kubectl --kubeconfig terraform/.generated/kubeconfig-local get pods -n apps
+kubectl --kubeconfig terraform/.generated/kubeconfig-local port-forward svc/dotnet-app 8080:8080 -n apps
 ```
 
-Откройте http://localhost:8080/health
+Откройте `/health` через `kubectl port-forward` (см. README шаблона).

@@ -7,25 +7,25 @@ variable "gitea_image" {
 }
 
 variable "gitea_port" {
-  description = "Порт веб-интерфейса Gitea на хосте"
+  description = "HTTP-порт Gitea в Docker-сети"
   type        = number
   default     = 3000
 }
 
 variable "gitea_ssh_port" {
-  description = "Порт SSH Gitea на хосте"
+  description = "SSH-порт Gitea (проброс на хост для git по SSH)"
   type        = number
   default     = 2222
 }
 
 variable "gitea_root_url" {
-  description = "Публичный URL Gitea"
+  description = "URL Gitea в Docker-сети (используется в ссылках Gitea и Actions)"
   type        = string
-  default     = "http://localhost:3000"
+  default     = "http://gitea:3000"
 }
 
 variable "gitea_actions_url" {
-  description = "URL для загрузки Actions (actions/checkout). Пусто — http://gitea:<port> внутри Docker-сети"
+  description = "URL для загрузки Actions. Пусто — http://gitea:<port> в Docker-сети"
   type        = string
   default     = ""
 }
@@ -52,9 +52,9 @@ variable "admin_email" {
 # --- act_runner ---
 
 variable "act_runner_image" {
-  description = "Имя локально собираемого образа act_runner (на базе gitea/act_runner + nodejs)"
+  description = "Имя локально собираемого образа act_runner"
   type        = string
-  default     = "environment-act-runner:latest"
+  default     = "gitea-act-runner:local"
 }
 
 variable "runner_name" {
@@ -81,22 +81,36 @@ variable "runner_container_name" {
   default     = "gitea-act-runner"
 }
 
-# --- Docker registry (для CI deploy в Kubernetes) ---
-
-variable "registry_port" {
-  description = "Порт на хосте для Docker registry (push/pull образов CI)"
-  type        = number
-  default     = 30500
-}
+# --- Docker registry ---
 
 variable "registry_container_name" {
-  description = "Имя контейнера Docker registry"
+  description = "DNS-имя Docker registry в сети gitea-network"
   type        = string
-  default     = "environment-registry"
+  default     = "docker-registry"
+}
+
+# --- Kubernetes (k3d) ---
+
+variable "create_k8s_cluster" {
+  description = "Создать k3d-кластер в Docker-сети gitea-network"
+  type        = bool
+  default     = true
+}
+
+variable "k8s_cluster_name" {
+  description = "Имя k3d-кластера"
+  type        = string
+  default     = "local"
+}
+
+variable "k8s_api_host_port" {
+  description = "Порт Kubernetes API на хосте (k3d --api-port)"
+  type        = number
+  default     = 6443
 }
 
 variable "kubeconfig_host_path" {
-  description = "Путь к kubeconfig на хосте (Docker Desktop Kubernetes). Пусто — ~/.kube/config"
+  description = "Путь к kubeconfig на хосте, если create_k8s_cluster = false"
   type        = string
   default     = ""
 }

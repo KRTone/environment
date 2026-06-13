@@ -9,8 +9,8 @@ on:
 env:
   IMAGE_NAME: ${image_name}
   K8S_NAMESPACE: ${k8s_namespace}
-  KUBECONFIG_HOST: ${kubeconfig_host_path}
-  REGISTRY_NODE_PORT: ${k8s_registry_node_port}
+  REGISTRY_ADDRESS: ${registry_address}
+  DOCKER_NETWORK: ${docker_network_name}
   GITEA_GIT_URL: http://oauth2:$${{ github.token }}@${gitea_host}:${gitea_port}/$${{ github.repository }}.git
 
 jobs:
@@ -63,30 +63,27 @@ jobs:
     steps:
       - name: Clone repository
         run: |
-          apk add --no-cache git
+          apk add --no-cache git curl
           git config --global --add safe.directory '*'
           git init
           git remote add origin "$${{ env.GITEA_GIT_URL }}"
           git fetch --depth=1 origin "$${{ github.sha }}"
           git checkout FETCH_HEAD
 
-      - name: Deploy to Kubernetes (Docker Desktop)
+      - name: Deploy to Kubernetes
         run: |
-          # kubeconfig с хоста; push образа в Docker registry (NodePort на хосте)
           set -e
-          kube_prep='cp /tmp/in/config /tmp/config && sed -i "s/127.0.0.1/host.docker.internal/g" /tmp/config && export KUBECONFIG=/tmp/config && kubectl config set-cluster docker-desktop --tls-server-name=localhost'
-          registry="127.0.0.1:$${{ env.REGISTRY_NODE_PORT }}"
+          registry="$${{ env.REGISTRY_ADDRESS }}"
           echo "Pushing $${{ env.IMAGE_NAME }} to $registry"
           docker tag $${{ env.IMAGE_NAME }}:latest "$registry/$${{ env.IMAGE_NAME }}:latest"
           docker push "$registry/$${{ env.IMAGE_NAME }}:latest"
+
+          curl -fsSLO "https://dl.k8s.io/release/v1.31.4/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          export KUBECONFIG=/kube/config
+
           for mf in k8s/namespace.yaml k8s/deployment.yaml k8s/service.yaml; do
             echo "Applying $mf"
-            docker run --rm -i --entrypoint /bin/sh \
-              -v "$${{ env.KUBECONFIG_HOST }}:/tmp/in/config:ro" \
-              bitnami/kubectl:latest \
-              -c "$kube_prep && kubectl apply -f -" < "$mf"
+            ./kubectl apply -f "$mf"
           done
-          docker run --rm --entrypoint /bin/sh \
-            -v "$${{ env.KUBECONFIG_HOST }}:/tmp/in/config:ro" \
-            bitnami/kubectl:latest \
-            -c "$kube_prep && kubectl -n $${{ env.K8S_NAMESPACE }} rollout status deployment/$${{ env.IMAGE_NAME }} --timeout=120s"
+          ./kubectl -n $${{ env.K8S_NAMESPACE }} rollout status deployment/$${{ env.IMAGE_NAME }} --timeout=120s

@@ -4,15 +4,16 @@
 # admin_email    = "you@example.com"
 # gitea_port     = 3000
 # gitea_ssh_port = 2222
-# gitea_root_url = "http://localhost:3000"
+# gitea_root_url = "http://gitea:3000"
 
 # act_runner
-# act_runner_image      = "environment-act-runner:latest"
+# act_runner_image      = "gitea-act-runner:local"
 # runner_name           = "gitea-docker-runner"
 # runner_labels         = "self-hosted:docker://node:20-bookworm,linux:docker://node:20-bookworm,docker:docker://docker:24-cli"
 # runner_container_name = "gitea-act-runner"
 
-# Docker registry для CI deploy в Kubernetes (шаблон: templates/dotnet/)
-# registry_port           = 30500
-# registry_container_name = "environment-registry"
-# kubeconfig_host_path    = "C:/Users/you/.kube/config"
+# Docker registry и k3d (шаблон: templates/dotnet/)
+# Требуется k3d в PATH — см. documentation/EnvironmentObsidian/Установка компонентов.md
+# registry_container_name = "docker-registry"
+# create_k8s_cluster      = true
+# k8s_cluster_name        = "local"

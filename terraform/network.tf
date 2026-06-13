@@ -1,3 +1,3 @@
 resource "docker_network" "gitea" {
-  name = "environment-network"
+  name = "gitea-network"
 }

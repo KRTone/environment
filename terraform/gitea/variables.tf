@@ -19,7 +19,7 @@ variable "gitea_ssh_port" {
 variable "gitea_root_url" {
   description = "Публичный URL Gitea (используется в ссылках и для подключения runner)"
   type        = string
-  default     = "http://localhost:3000"
+  default     = "http://gitea:3000"
 }
 
 variable "gitea_actions_url" {

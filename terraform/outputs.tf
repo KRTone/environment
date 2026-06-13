@@ -45,11 +45,41 @@ output "runner_registration_token" {
 }
 
 output "registry_url" {
-  description = "URL локального Docker registry для CI (push/pull образов)"
+  description = "URL Docker registry в сети gitea-network"
   value       = module.docker_registry.registry_url
+}
+
+output "registry_address" {
+  description = "Адрес registry для образов в CI и Kubernetes (host:port)"
+  value       = module.docker_registry.registry_address
 }
 
 output "registry_container_name" {
   description = "Имя контейнера Docker registry"
   value       = module.docker_registry.container_name
+}
+
+output "k8s_cluster_name" {
+  description = "Имя k3d-кластера"
+  value       = var.create_k8s_cluster ? module.k8s_cluster[0].cluster_name : null
+}
+
+output "k8s_cluster_context" {
+  description = "Имя контекста kubectl для CI (k3d-<cluster_name>)"
+  value       = var.create_k8s_cluster ? module.k8s_cluster[0].cluster_context : null
+}
+
+output "k8s_api_server" {
+  description = "Адрес API Kubernetes в Docker-сети"
+  value       = var.create_k8s_cluster ? module.k8s_cluster[0].api_server : null
+}
+
+output "kubeconfig_path" {
+  description = "Путь к kubeconfig для kubectl с хоста"
+  value       = local.kubeconfig_host_path
+}
+
+output "kubeconfig_runner_path" {
+  description = "Путь к kubeconfig для act_runner и CI (смонтирован в /kube/config)"
+  value       = local.kubeconfig_runner_path
 }

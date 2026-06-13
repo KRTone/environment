@@ -2,8 +2,10 @@
 # Local .terraform directories
 .terraform/
 
-# Generated act_runner config (created on terraform apply)
+# Generated configs (created on terraform apply)
 terraform/act_runner/.generated/
+terraform/.generated/
+terraform/k8s_cluster/.generated/
 
 # .tfstate files
 *.tfstate
