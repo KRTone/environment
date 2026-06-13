@@ -10,4 +10,3 @@ container:
   network: gitea-network
   valid_volumes:
     - /var/run/docker.sock
-    - C:/Users/KRT/Desktop/environment/terraform/.generated/kubeconfig-local-runner

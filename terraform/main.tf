@@ -57,5 +57,4 @@ module "act_runner" {
   runner_labels             = var.runner_labels
   docker_socket_path        = var.docker_socket_path
   container_name            = var.runner_container_name
-  kubeconfig_host_path      = local.kubeconfig_runner_path
 }

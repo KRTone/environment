@@ -19,8 +19,7 @@ resource "docker_image" "act_runner" {
 
 resource "local_file" "runner_config" {
   content = templatefile("${path.module}/config.yaml.tpl", {
-    network_name         = var.network_name
-    kubeconfig_host_path = var.kubeconfig_host_path
+    network_name = var.network_name
   })
   filename = "${path.module}/.generated/config.yaml"
 }
@@ -81,14 +80,5 @@ resource "docker_container" "act_runner" {
   volumes {
     host_path      = var.docker_socket_path
     container_path = "/var/run/docker.sock"
-  }
-
-  dynamic "volumes" {
-    for_each = var.kubeconfig_host_path != "" ? [1] : []
-    content {
-      host_path      = var.kubeconfig_host_path
-      container_path = "/kube/config"
-      read_only      = true
-    }
   }
 }

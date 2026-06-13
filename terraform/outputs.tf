@@ -90,6 +90,12 @@ output "kubeconfig_path" {
 }
 
 output "kubeconfig_runner_path" {
-  description = "Путь к kubeconfig для act_runner и CI (смонтирован в /kube/config)"
+  description = "Путь к kubeconfig для CI (server: k3d-<cluster>-server-0:6443) — закодировать в Gitea secret KUBE_CONFIG"
   value       = local.kubeconfig_runner_path
+}
+
+output "kubeconfig_runner_base64" {
+  description = "Base64 kubeconfig для Gitea repository secret KUBE_CONFIG (как actions-hub/kubectl)"
+  value       = var.create_k8s_cluster ? filebase64(local.kubeconfig_runner_generated_path) : null
+  sensitive   = true
 }

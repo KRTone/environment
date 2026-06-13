@@ -10,6 +10,3 @@ container:
   network: ${network_name}
   valid_volumes:
     - /var/run/docker.sock
-%{ if kubeconfig_host_path != "" ~}
-    - ${kubeconfig_host_path}
-%{ endif ~}

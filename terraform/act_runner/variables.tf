@@ -50,9 +50,3 @@ variable "container_name" {
   type        = string
   default     = "gitea-act-runner"
 }
-
-variable "kubeconfig_host_path" {
-  description = "Путь к kubeconfig на хосте для deploy в Kubernetes"
-  type        = string
-  default     = ""
-}
