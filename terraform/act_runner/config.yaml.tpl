@@ -11,5 +11,5 @@ container:
   valid_volumes:
     - /var/run/docker.sock
 %{ if kubeconfig_host_path != "" ~}
-  options: --mount type=bind,source=${kubeconfig_host_path},target=/kube/config,readonly
+    - ${kubeconfig_host_path}
 %{ endif ~}

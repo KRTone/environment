@@ -10,4 +10,4 @@ container:
   network: gitea-network
   valid_volumes:
     - /var/run/docker.sock
-  options: --mount type=bind,source=C:/Users/KRT/Desktop/environment/terraform/.generated/kubeconfig-local-runner,target=/kube/config,readonly
+    - C:/Users/KRT/Desktop/environment/terraform/.generated/kubeconfig-local-runner

@@ -19,7 +19,9 @@
 | `image_name` | `dotnet-app` |
 | `k8s_namespace` | `apps` |
 | `k8s_node_port` | `30080` |
-| `registry_address` | `docker-registry:5000` (из `terraform output -raw registry_address`) |
+| `registry_push_address` | `host.docker.internal:30500` (из `terraform output -raw registry_push_address`) |
+| `kubeconfig_runner_path` | `C:/Users/.../terraform/.generated/kubeconfig-local-runner` (из `terraform output -raw kubeconfig_runner_path`) |
+| `registry_address` | `docker-registry:5000` — только для `k8s/deployment.yaml` (pull) |
 | `docker_network_name` | `gitea-network` |
 | `runner_label` | `self-hosted` |
 | `gitea_host` | `gitea` |
@@ -31,7 +33,7 @@
 
 1. **test** — `dotnet test`
 2. **build-image** — сборка Docker-образа на runner
-3. **deploy** — push в `docker-registry:5000` + `kubectl apply` через `/kube/config`
+3. **deploy** — push в `host.docker.internal:30500`, `kubectl apply` через nested `docker run` (kubeconfig с хоста)
 
 ## Локальный запуск
 

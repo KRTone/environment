@@ -20,3 +20,8 @@ variable "registry_port" {
   type        = number
   default     = 5000
 }
+
+variable "registry_host_port" {
+  description = "Порт registry на хосте (docker push через Docker daemon в CI)"
+  type        = number
+}

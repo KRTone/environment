@@ -24,8 +24,9 @@ module "gitea" {
 module "docker_registry" {
   source = "./docker_registry"
 
-  network_name   = docker_network.gitea.name
-  container_name = var.registry_container_name
+  network_name       = docker_network.gitea.name
+  container_name     = var.registry_container_name
+  registry_host_port = var.registry_host_port
 }
 
 module "k8s_cluster" {

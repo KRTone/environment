@@ -89,6 +89,12 @@ variable "registry_container_name" {
   default     = "docker-registry"
 }
 
+variable "registry_host_port" {
+  description = "Порт Docker registry на хосте для push из CI (docker push через daemon)"
+  type        = number
+  default     = 30500
+}
+
 # --- Kubernetes (k3d) ---
 
 variable "create_k8s_cluster" {

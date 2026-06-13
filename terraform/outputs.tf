@@ -50,8 +50,18 @@ output "registry_url" {
 }
 
 output "registry_address" {
-  description = "Адрес registry для образов в CI и Kubernetes (host:port)"
+  description = "Адрес registry для pull в Kubernetes (docker-registry:5000 в gitea-network)"
   value       = module.docker_registry.registry_address
+}
+
+output "registry_host_port" {
+  description = "Порт registry на хосте"
+  value       = module.docker_registry.registry_host_port
+}
+
+output "registry_push_address" {
+  description = "Адрес registry для docker push из CI"
+  value       = module.docker_registry.registry_push_address
 }
 
 output "registry_container_name" {
