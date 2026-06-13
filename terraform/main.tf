@@ -28,5 +28,14 @@ module "act_runner" {
   docker_socket_path       = var.docker_socket_path
   container_name           = var.runner_container_name
   kubeconfig_host_path     = local.kubeconfig_host_path
-  mount_kubeconfig         = var.mount_kubeconfig_in_runner && var.create_dotnet_repo
+  mount_kubeconfig         = var.mount_kubeconfig_in_runner
+}
+
+module "registry" {
+  source = "./registry"
+  count  = var.create_registry ? 1 : 0
+
+  network_name   = docker_network.gitea.name
+  registry_port  = var.registry_port
+  container_name = var.registry_container_name
 }

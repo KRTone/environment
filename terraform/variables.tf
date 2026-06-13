@@ -87,48 +87,24 @@ variable "runner_container_name" {
   default     = "gitea-act-runner"
 }
 
-# --- .NET repository & Kubernetes ---
+# --- Docker registry (для CI deploy в Kubernetes) ---
 
-variable "create_dotnet_repo" {
-  description = "Создать .NET репозиторий в Gitea с workflow CI/CD"
+variable "create_registry" {
+  description = "Поднять локальный Docker registry (registry:2) для push/pull образов из CI"
   type        = bool
   default     = true
 }
 
-variable "dotnet_repo_name" {
-  description = "Имя .NET репозитория в Gitea"
-  type        = string
-  default     = "dotnet-app"
-}
-
-variable "dotnet_repo_owner" {
-  description = "Владелец .NET репозитория (пользователь Gitea)"
-  type        = string
-  default     = "admin"
-}
-
-variable "dotnet_image_name" {
-  description = "Имя Docker-образа и Kubernetes deployment"
-  type        = string
-  default     = "dotnet-app"
-}
-
-variable "k8s_namespace" {
-  description = "Kubernetes namespace для deploy"
-  type        = string
-  default     = "environment"
-}
-
-variable "k8s_node_port" {
-  description = "NodePort для сервиса .NET приложения"
-  type        = number
-  default     = 30080
-}
-
-variable "k8s_registry_node_port" {
-  description = "NodePort для in-cluster Docker registry (push/pull образов CI)"
+variable "registry_port" {
+  description = "Порт на хосте для Docker registry (push/pull образов CI)"
   type        = number
   default     = 30500
+}
+
+variable "registry_container_name" {
+  description = "Имя контейнера Docker registry"
+  type        = string
+  default     = "environment-registry"
 }
 
 variable "kubeconfig_host_path" {
