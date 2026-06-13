@@ -1,3 +1,7 @@
+locals {
+  kubeconfig_host_path = var.kubeconfig_host_path != "" ? replace(var.kubeconfig_host_path, "\\", "/") : replace(pathexpand("~/.kube/config"), "\\", "/")
+}
+
 module "gitea" {
   source = "./gitea"
 
@@ -27,13 +31,11 @@ module "act_runner" {
   runner_labels = var.runner_labels
   docker_socket_path       = var.docker_socket_path
   container_name           = var.runner_container_name
-  kubeconfig_host_path     = local.kubeconfig_host_path
-  mount_kubeconfig         = var.mount_kubeconfig_in_runner
+  kubeconfig_host_path = local.kubeconfig_host_path
 }
 
-module "registry" {
-  source = "./registry"
-  count  = var.create_registry ? 1 : 0
+module "docker_registry" {
+  source = "./docker_registry"
 
   network_name   = docker_network.gitea.name
   registry_port  = var.registry_port

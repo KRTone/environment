@@ -1,9 +1,3 @@
-variable "network_name" {
-  description = "Имя общей Docker-сети для Gitea и act_runner"
-  type        = string
-  default     = "environment-network"
-}
-
 # --- Gitea ---
 
 variable "gitea_image" {
@@ -89,12 +83,6 @@ variable "runner_container_name" {
 
 # --- Docker registry (для CI deploy в Kubernetes) ---
 
-variable "create_registry" {
-  description = "Поднять локальный Docker registry (registry:2) для push/pull образов из CI"
-  type        = bool
-  default     = true
-}
-
 variable "registry_port" {
   description = "Порт на хосте для Docker registry (push/pull образов CI)"
   type        = number
@@ -111,10 +99,4 @@ variable "kubeconfig_host_path" {
   description = "Путь к kubeconfig на хосте (Docker Desktop Kubernetes). Пусто — ~/.kube/config"
   type        = string
   default     = ""
-}
-
-variable "mount_kubeconfig_in_runner" {
-  description = "Смонтировать kubeconfig в act_runner для deploy job'ов"
-  type        = bool
-  default     = true
 }

@@ -56,9 +56,3 @@ variable "kubeconfig_host_path" {
   type        = string
   default     = ""
 }
-
-variable "mount_kubeconfig" {
-  description = "Смонтировать kubeconfig в контейнер act_runner"
-  type        = bool
-  default     = false
-}

@@ -46,10 +46,10 @@ output "runner_registration_token" {
 
 output "registry_url" {
   description = "URL локального Docker registry для CI (push/pull образов)"
-  value       = var.create_registry ? module.registry[0].registry_url : null
+  value       = module.docker_registry.registry_url
 }
 
 output "registry_container_name" {
   description = "Имя контейнера Docker registry"
-  value       = var.create_registry ? module.registry[0].container_name : null
+  value       = module.docker_registry.container_name
 }

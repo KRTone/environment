@@ -1,6 +1,3 @@
-# Общая сеть
-network_name = "environment-network"
-
 # Gitea
 # admin_username = "admin"
 # admin_password = "надёжный_пароль"
@@ -16,8 +13,6 @@ network_name = "environment-network"
 # runner_container_name = "gitea-act-runner"
 
 # Docker registry для CI deploy в Kubernetes (шаблон: templates/dotnet/)
-# create_registry            = true
-# registry_port              = 30500
-# registry_container_name    = "environment-registry"
-# kubeconfig_host_path     = "C:/Users/you/.kube/config"
-# mount_kubeconfig_in_runner = true
+# registry_port           = 30500
+# registry_container_name = "environment-registry"
+# kubeconfig_host_path    = "C:/Users/you/.kube/config"

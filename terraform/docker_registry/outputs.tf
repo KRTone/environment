@@ -12,8 +12,3 @@ output "registry_url" {
   description = "URL локального Docker registry для CI (push/pull образов)"
   value       = "localhost:${var.registry_port}"
 }
-
-output "network_name" {
-  description = "Имя Docker-сети registry"
-  value       = var.network_name
-}
