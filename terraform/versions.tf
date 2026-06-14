@@ -6,17 +6,29 @@ terraform {
       source  = "kreuzwerker/docker"
       version = "~> 3.0"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.2"
+    k3d = {
+      source  = "SneakyBugs/k3d"
+      version = "~> 1.0"
     }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.6"
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.35"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.17"
+    }
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.12"
     }
     local = {
       source  = "hashicorp/local"
       version = "~> 2.5"
+    }
+    gitea = {
+      source  = "go-gitea/gitea"
+      version = "~> 0.6"
     }
   }
 }

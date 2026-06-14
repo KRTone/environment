@@ -75,27 +75,28 @@ output "k8s_cluster_name" {
 }
 
 output "k8s_cluster_context" {
-  description = "Имя контекста kubectl для CI (k3d-<cluster_name>)"
+  description = "Имя контекста kubectl (k3d-<cluster_name>)"
   value       = var.create_k8s_cluster ? module.k8s_cluster[0].cluster_context : null
 }
 
-output "k8s_api_server" {
-  description = "Адрес API Kubernetes в Docker-сети"
-  value       = var.create_k8s_cluster ? module.k8s_cluster[0].api_server : null
+output "kubeconfig" {
+  description = "Kubeconfig k3d-кластера (строка, для kubectl --kubeconfig или KUBECONFIG)"
+  value       = var.create_k8s_cluster ? module.k8s_cluster[0].kubeconfig : null
+  sensitive   = true
 }
 
-output "kubeconfig_path" {
-  description = "Путь к kubeconfig для kubectl с хоста"
-  value       = local.kubeconfig_host_path
+output "argocd_ui_url" {
+  description = "URL UI ArgoCD (NodePort k3d)"
+  value       = var.create_k8s_cluster && var.install_argocd ? module.argocd[0].ui_url : null
 }
 
-output "kubeconfig_runner_path" {
-  description = "Путь к kubeconfig для CI (server: k3d-<cluster>-server-0:6443) — закодировать в Gitea secret KUBE_CONFIG"
-  value       = local.kubeconfig_runner_path
+output "argocd_app_namespace" {
+  description = "Namespace приложений для ручного GitOps"
+  value       = var.create_k8s_cluster && var.install_argocd ? module.argocd[0].app_namespace : null
 }
 
-output "kubeconfig_runner_base64" {
-  description = "Base64 kubeconfig для Gitea repository secret KUBE_CONFIG (как actions-hub/kubectl)"
-  value       = var.create_k8s_cluster ? filebase64(local.kubeconfig_runner_generated_path) : null
+output "argocd_admin_password" {
+  description = "Пароль admin ArgoCD (статический, см. argocd-values.yaml)"
+  value       = var.create_k8s_cluster && var.install_argocd ? var.argocd_admin_password : null
   sensitive   = true
 }

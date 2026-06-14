@@ -1,3 +1,10 @@
+resource "local_file" "runner_config" {
+  content = templatefile("${path.module}/config.yaml.tpl", {
+    network_name = var.network_name
+  })
+  filename = "${path.module}/.generated/config.yaml"
+}
+
 resource "docker_volume" "runner_data" {
   name = "gitea-runner-data"
 }
@@ -14,26 +21,6 @@ resource "docker_image" "act_runner" {
 
   triggers = {
     dockerfile = filesha256("${path.module}/Dockerfile")
-  }
-}
-
-resource "local_file" "runner_config" {
-  content = templatefile("${path.module}/config.yaml.tpl", {
-    network_name = var.network_name
-  })
-  filename = "${path.module}/.generated/config.yaml"
-}
-
-# Метки runner хранятся в /data/.runner — при смене labels нужна перерегистрация.
-resource "null_resource" "clear_runner_registration" {
-  triggers = {
-    runner_labels = var.runner_labels
-    runner_name   = var.runner_name
-  }
-
-  provisioner "local-exec" {
-    interpreter = ["PowerShell", "-Command"]
-    command     = "docker run --rm -v gitea-runner-data:/data alpine sh -c 'rm -f /data/.runner' 2>$null; exit 0"
   }
 }
 
@@ -55,10 +42,7 @@ resource "docker_container" "act_runner" {
 
   restart = "unless-stopped"
 
-  depends_on = [
-    local_file.runner_config,
-    null_resource.clear_runner_registration,
-  ]
+  depends_on = [local_file.runner_config]
 
   networks_advanced {
     name = var.network_name

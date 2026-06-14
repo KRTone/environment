@@ -1,19 +1,30 @@
-# Gitea
+# Gitea (статические учётные данные по умолчанию: admin / admin)
+
 # admin_username = "admin"
-# admin_password = "надёжный_пароль"
-# admin_email    = "you@example.com"
+# admin_password = "admin"
+# admin_email    = "admin@admin.admin"
+# runner_registration_token = "gitea-actions-runner-registration-token"
+
 # gitea_port     = 3000
 # gitea_ssh_port = 2222
 # gitea_root_url = "http://gitea:3000"
 
 # act_runner
+
 # act_runner_image      = "gitea-act-runner:local"
 # runner_name           = "gitea-docker-runner"
 # runner_labels         = "self-hosted:docker://node:20-bookworm,linux:docker://node:20-bookworm,docker:docker://docker:24-cli"
 # runner_container_name = "gitea-act-runner"
 
-# Docker registry и k3d (шаблон: templates/dotnet/)
-# Требуется k3d в PATH — см. documentation/EnvironmentObsidian/Установка компонентов.md
+# Docker registry и k3d (шаблон приложения: templates/dotnet/)
+
 # registry_container_name = "docker-registry"
 # create_k8s_cluster      = true
 # k8s_cluster_name        = "local"
+
+# ArgoCD (Helm only; repository и Application — вручную в UI)
+
+# install_argocd        = true
+# argocd_admin_password = "admin"
+# argocd_app_namespace  = "apps"
+# argocd_ui_node_port   = 30090

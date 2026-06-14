@@ -47,6 +47,13 @@ variable "admin_email" {
   default     = "admin@admin.admin"
 }
 
+variable "runner_registration_token" {
+  description = "Статический токен регистрации Gitea Actions runner"
+  type        = string
+  default     = "gitea-actions-runner-registration-token"
+  sensitive   = true
+}
+
 variable "network_name" {
   description = "Имя Docker-сети (создаётся в корневом terraform/network.tf)"
   type        = string

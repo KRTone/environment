@@ -1,0 +1,40 @@
+server:
+  service:
+    type: NodePort
+    nodePortHttp: 30090
+
+  extraArgs:
+    - --insecure
+
+  config:
+    timeout.reconciliation: 180s
+
+configs:
+  secret:
+    # bcrypt("admin"), cost=10 — совпадает с argocd_admin_password по умолчанию
+    argocdServerAdminPassword: "$2a$10$T1QBXd1tpEjNP2Kl5c2iT.jq2fGUgfiMFvX4F6HB81.12wy0oyaIu"
+    argocdServerAdminPasswordMtime: "2020-01-01T00:00:00Z"
+
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false

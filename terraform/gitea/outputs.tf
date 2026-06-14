@@ -18,6 +18,11 @@ output "admin_email" {
   value       = var.admin_email
 }
 
+output "admin_user_id" {
+  description = "ID admin-пользователя Gitea"
+  value       = gitea_user.admin.id
+}
+
 output "gitea_container_name" {
   description = "Имя контейнера Gitea"
   value       = docker_container.gitea.name
@@ -34,7 +39,7 @@ output "runner_gitea_url" {
 }
 
 output "runner_registration_token" {
-  description = "Токен регистрации Gitea Actions runner (передайте в act_runner)"
-  value       = random_password.runner_token.result
+  description = "Токен регистрации Gitea Actions runner"
+  value       = var.runner_registration_token
   sensitive   = true
 }

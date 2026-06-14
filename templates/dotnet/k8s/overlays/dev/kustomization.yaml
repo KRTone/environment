@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: ${k8s_namespace}
+resources:
+  - ../../base
+images:
+  - name: ${registry_address}/${image_name}
+    newTag: init

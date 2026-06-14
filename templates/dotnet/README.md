@@ -1,44 +1,21 @@
 # DotNetApp
 
-Пример .NET 8 Web API с CI/CD через Gitea Actions.
+Пример .NET 8 Web API с GitOps (Gitea Actions + ArgoCD).
 
-Репозиторий **не создаётся Terraform** — разверните вручную из этого шаблона.
-
-## Создание репозитория в Gitea
-
-1. Создайте репозиторий в Gitea (например `admin/dotnet-app`).
-2. Скопируйте содержимое шаблона (кроме `.tpl`-файлов — их нужно отрендерить).
-3. Отрендерите `.gitea/workflows/ci.yml.tpl` → `.gitea/workflows/ci.yml`.
-4. Отрендерите `k8s/*.yaml` — замените `${image_name}`, `${k8s_namespace}`, `${k8s_node_port}`, `${registry_address}`.
-5. `git init`, commit, push в Gitea.
-
-### Gitea Secrets (обязательно для deploy)
-
-По аналогии с [actions-hub/kubectl](https://github.com/actions-hub/kubectl): kubeconfig передаётся **целиком** в secret `KUBE_CONFIG` (base64).
-
-После `terraform apply`:
+## 1. Инфраструктура
 
 ```powershell
 cd terraform
-terraform output -raw kubeconfig_runner_base64
+terraform apply
 ```
 
-**Gitea → репозиторий → Settings → Secrets → Actions:**
+## 2. Репозиторий в Gitea
 
-| Secret | Значение |
-|--------|----------|
-| `KUBE_CONFIG` | вывод `terraform output -raw kubeconfig_runner_base64` |
-| `KUBE_CONTEXT` | опционально, например `k3d-local` (если в kubeconfig несколько контекстов) |
+1. Создайте репозиторий `admin/dotnet-app` (URL = `argocd_app_repo_url` в Terraform).
+2. Скопируйте шаблон, отрендерите `.tpl` → `.gitea/workflows/ci.yml`, `k8s/base/*`, `k8s/overlays/dev/kustomization.yaml`.
+3. Push в `main`.
 
-Или вручную (PowerShell):
-
-```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("terraform/.generated/kubeconfig-local-runner"))
-```
-
-Файл `kubeconfig-local-runner` содержит `server: https://k3d-local-server-0:6443` — для job-контейнеров в `gitea-network`.
-
-### Переменные для ci.yml.tpl
+### Переменные для `ci.yml.tpl`
 
 | Переменная | Пример |
 |------------|--------|
@@ -46,15 +23,12 @@ terraform output -raw kubeconfig_runner_base64
 | `k8s_namespace` | `apps` |
 | `k8s_node_port` | `30080` |
 | `registry_push_address` | `host.docker.internal:30500` |
-| `registry_address` | `docker-registry:5000` — только для `k8s/deployment.yaml` |
-| `docker_network_name` | `gitea-network` |
+| `registry_address` | `docker-registry:5000` |
 | `runner_label` | `self-hosted` |
 | `gitea_host` | `gitea` |
 | `gitea_port` | `3000` |
 
 ### Docker Desktop
-
-В **Settings → Docker Engine**:
 
 ```json
 "insecure-registries": ["host.docker.internal:30500"]
@@ -62,21 +36,13 @@ terraform output -raw kubeconfig_runner_base64
 
 ## Pipeline
 
-1. **test** — `dotnet test`
-2. **build-image** — сборка Docker-образа на runner
-3. **deploy** — push в registry, `kubectl apply` (kubeconfig из `secrets.KUBE_CONFIG`)
+`test` → `build-image` → `deploy` (push образа + commit `newTag` в Git → ArgoCD sync)
 
-## Локальный запуск
+## ArgoCD UI
 
 ```powershell
-dotnet run --project src/DotNetApp
+terraform -chdir=terraform output argocd_ui_url
+terraform -chdir=terraform output -raw argocd_admin_password
 ```
 
-## Kubernetes
-
-```powershell
-kubectl --kubeconfig terraform/.generated/kubeconfig-local get pods -n apps
-kubectl --kubeconfig terraform/.generated/kubeconfig-local port-forward svc/dotnet-app 8080:8080 -n apps
-```
-
-Откройте `/health` через `kubectl port-forward`.
+Логин: `admin`.

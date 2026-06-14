@@ -49,6 +49,13 @@ variable "admin_email" {
   default     = "admin@admin.admin"
 }
 
+variable "runner_registration_token" {
+  description = "Статический токен регистрации Gitea Actions runner"
+  type        = string
+  default     = "gitea-actions-runner-registration-token"
+  sensitive   = true
+}
+
 # --- act_runner ---
 
 variable "act_runner_image" {
@@ -119,4 +126,37 @@ variable "kubeconfig_host_path" {
   description = "Путь к kubeconfig на хосте, если create_k8s_cluster = false"
   type        = string
   default     = ""
+}
+
+# --- ArgoCD / GitOps ---
+
+variable "install_argocd" {
+  description = "Установить ArgoCD (Helm). Repository и Application создаются вручную"
+  type        = bool
+  default     = true
+}
+
+variable "argocd_helm_chart_version" {
+  description = "Версия Helm chart argo-cd"
+  type        = string
+  default     = "7.7.16"
+}
+
+variable "argocd_ui_node_port" {
+  description = "NodePort HTTP для UI ArgoCD"
+  type        = number
+  default     = 30090
+}
+
+variable "argocd_admin_password" {
+  description = "Пароль admin ArgoCD (bcrypt-хеш в argocd/values/argocd-values.yaml)"
+  type        = string
+  default     = "admin"
+  sensitive   = true
+}
+
+variable "argocd_app_namespace" {
+  description = "Namespace приложений (создаётся Terraform; GitOps-ресурсы — вручную)"
+  type        = string
+  default     = "apps"
 }

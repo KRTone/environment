@@ -13,17 +13,13 @@ variable "registry_address" {
   type        = string
 }
 
-variable "kubeconfig_path" {
-  description = "Абсолютный путь на хосте для kubeconfig (рядом пишется <path>-runner для CI)"
-  type        = string
-}
-
-variable "registries_config_path" {
-  description = "Абсолютный путь на хосте для k3d registries.yaml"
-  type        = string
-}
-
 variable "api_host_port" {
-  description = "Порт Kubernetes API на хосте (k3d --api-port)"
+  description = "Порт Kubernetes API на хосте"
   type        = number
+}
+
+variable "argocd_ui_node_port" {
+  description = "NodePort ArgoCD UI для проброса через k3d loadbalancer"
+  type        = number
+  default     = 30090
 }

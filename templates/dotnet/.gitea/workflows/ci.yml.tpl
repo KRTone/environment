@@ -10,7 +10,8 @@ env:
   IMAGE_NAME: ${image_name}
   K8S_NAMESPACE: ${k8s_namespace}
   REGISTRY_PUSH_ADDRESS: ${registry_push_address}
-  DOCKER_NETWORK: ${docker_network_name}
+  REGISTRY_ADDRESS: ${registry_address}
+  KUSTOMIZE_OVERLAY: k8s/overlays/dev
   GITEA_GIT_URL: http://oauth2:${{ github.token }}@${gitea_host}:${gitea_port}/${{ github.repository }}.git
 
 jobs:
@@ -63,46 +64,43 @@ jobs:
     steps:
       - name: Clone repository
         run: |
-          apk add --no-cache git curl
+          apk add --no-cache git
           git config --global --add safe.directory '*'
           git init
           git remote add origin "${{ env.GITEA_GIT_URL }}"
-          git fetch --depth=1 origin "${{ github.sha }}"
-          git checkout FETCH_HEAD
+          git fetch origin main
+          git checkout main
+          git pull origin main
 
-      - name: Deploy to Kubernetes
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
-          KUBE_CONTEXT: ${{ secrets.KUBE_CONTEXT }}
+      - name: GitOps deploy
         run: |
           set -e
+          SHA="${{ github.sha }}"
+          OVERLAY="$KUSTOMIZE_OVERLAY/kustomization.yaml"
+
           if [ -z "$REGISTRY_PUSH_ADDRESS" ]; then
-            echo "ERROR: REGISTRY_PUSH_ADDRESS is empty — set in ci.yml env (host.docker.internal:30500)"
+            echo "ERROR: REGISTRY_PUSH_ADDRESS is empty — set in ci.yml env"
             exit 1
           fi
-          if [ -z "$KUBE_CONFIG" ]; then
-            echo "ERROR: secrets.KUBE_CONFIG is empty — add Gitea repository secret (terraform output -raw kubeconfig_runner_base64)"
+          if [ ! -f "$OVERLAY" ]; then
+            echo "ERROR: $OVERLAY not found — render k8s/overlays/dev from template"
             exit 1
           fi
 
-          echo "Pushing $IMAGE_NAME to $REGISTRY_PUSH_ADDRESS"
-          docker tag "$IMAGE_NAME:latest" "$REGISTRY_PUSH_ADDRESS/$IMAGE_NAME:latest"
-          docker push "$REGISTRY_PUSH_ADDRESS/$IMAGE_NAME:latest"
+          echo "Pushing $IMAGE_NAME:$SHA to $REGISTRY_PUSH_ADDRESS"
+          docker tag "$IMAGE_NAME:latest" "$REGISTRY_PUSH_ADDRESS/$IMAGE_NAME:$SHA"
+          docker push "$REGISTRY_PUSH_ADDRESS/$IMAGE_NAME:$SHA"
 
-          mkdir -p "$HOME/.kube"
-          echo "$KUBE_CONFIG" | base64 -d > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
-          export KUBECONFIG="$HOME/.kube/config"
+          echo "Updating GitOps manifest: $OVERLAY"
+          sed -i "s/newTag: .*/newTag: $SHA/" "$OVERLAY"
 
-          curl -fsSLO "https://dl.k8s.io/release/v1.31.4/bin/linux/amd64/kubectl"
-          chmod +x kubectl
-
-          if [ -n "$KUBE_CONTEXT" ]; then
-            ./kubectl config use-context "$KUBE_CONTEXT"
+          git config user.email "actions@gitea.local"
+          git config user.name "Gitea Actions"
+          git add "$OVERLAY"
+          if git diff --staged --quiet; then
+            echo "Manifest already at $SHA — nothing to commit"
+            exit 0
           fi
-
-          for mf in k8s/namespace.yaml k8s/deployment.yaml k8s/service.yaml; do
-            echo "Applying $mf"
-            ./kubectl apply -f "$mf"
-          done
-          ./kubectl -n "$K8S_NAMESPACE" rollout status "deployment/$IMAGE_NAME" --timeout=120s
+          git commit -m "deploy: $IMAGE_NAME@$SHA"
+          git push origin main
+          echo "ArgoCD will sync from Git (pull-based GitOps)"
