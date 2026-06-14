@@ -60,8 +60,3 @@ resource "docker_container" "gitea" {
     start_period = "30s"
   }
 }
-
-resource "time_sleep" "wait_for_gitea" {
-  depends_on      = [docker_container.gitea]
-  create_duration = "20s"
-}

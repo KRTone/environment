@@ -18,11 +18,6 @@ output "admin_email" {
   value       = var.admin_email
 }
 
-output "admin_user_id" {
-  description = "ID admin-пользователя Gitea"
-  value       = gitea_user.admin.id
-}
-
 output "gitea_container_name" {
   description = "Имя контейнера Gitea"
   value       = docker_container.gitea.name

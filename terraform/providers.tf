@@ -17,10 +17,3 @@ provider "helm" {
     config_path            = var.create_k8s_cluster ? null : local.kubeconfig_user_path
   }
 }
-
-provider "gitea" {
-  base_url = "http://127.0.0.1:${var.gitea_port}"
-  username = var.admin_username
-  password = var.admin_password
-  insecure = true
-}
