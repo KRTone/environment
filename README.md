@@ -1,4 +1,10 @@
-# Local dev stack
+# Описание
+Учебный проект для локального развёртывания в docker инфраструктуры для разработки включающая в себя:
+- terraform
+- git
+- ci/cd
+- image registry
+- кластер k8s
 
 Gitea, Gitea Actions runner, Docker registry, k3d и ArgoCD (GitOps) в `gitea-network`.
 
@@ -17,3 +23,8 @@ terraform apply
 ```
 
 Затем — репозиторий из `templates/dotnet/` и push в Gitea (см. `templates/dotnet/README.md`).
+
+
+# Дальнейшие шаги
+1. Заменить локальный K8s на внейшний кластер(облачный или on-pem)
+2. настроить registry и deployment под внешний кластер
